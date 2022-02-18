@@ -200,7 +200,7 @@ export class ServiceConnection extends EventEmitter {
 
       this.setConnectionStatus(ConnectionStatus.CONNECTED);
     } catch (error) {
-      this.log.error(`[amqp-connection] ${error.message}`, error);
+      this.log.error(`[amqp-connection] ${error instanceof Error ? error.message : String(error)}`, error);
 
       await timeout(retryStrategy(attempt));
       this.log.info(`[amqp-connection] Retry connection to RabbitMQ. Attempt ${attempt}/${maxReconnects}`);
@@ -489,7 +489,7 @@ export class ServiceConnection extends EventEmitter {
 
       this.log.info(`[amqp-connection] unsubscribed from queue "${this.name}"\n`);
     } catch (error) {
-      this.log.error('[amqp-connection] cannot unsubscribe. \n', error.message);
+      this.log.error('[amqp-connection] cannot unsubscribe. \n', error instanceof Error ? error.message : error);
     } finally {
       delete this.queuesConsumerTags[this.name];
     }
@@ -512,7 +512,7 @@ export class ServiceConnection extends EventEmitter {
         return;
       }
 
-      this.log.error(`[amqp-connection] Cannot close connection. ${error.message}\n`);
+      this.log.error(`[amqp-connection] Cannot close connection. ${error instanceof Error ? error.message : String(error)}\n`);
     } finally {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
